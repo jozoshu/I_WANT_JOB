@@ -35,7 +35,7 @@ class WantedHandler(BaseHandler):
             return False
 
     def set_job_list(self):
-        idx = 30
+        idx = 0
         is_continue = True
         while is_continue:
             print(f'Wanted - {idx}번째 리스트 crawl')
