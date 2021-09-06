@@ -22,7 +22,7 @@ class WantedJobListCrawler(BaseCrawler):
         base_url = 'https://www.wanted.co.kr/api/v4/jobs'
         super().__init__(base_url)
 
-    def crawl(self, params) -> Dict:
+    def crawl(self, params: Dict) -> Dict:
         res_json = self.request_get(params)
         if not res_json['data']:
             raise ValueError('더 이상 채용공고 없음')
@@ -56,11 +56,11 @@ class WantedPositionDetailCrawler(BaseCrawler):
         base_url = 'https://www.wanted.co.kr/api/v4/jobs/{position_id}?{timestamp}'
         super().__init__(base_url)
 
-    def _set_base_url(self, position_id):
+    def _set_base_url(self, position_id: int):
         timestamp = time.mktime(datetime.now().timetuple()) * 1000
         self.base_url = self.base_url.format(position_id=position_id, timestamp=int(timestamp))
 
-    def crawl(self, position_id) -> Dict:
+    def crawl(self, position_id: int) -> Dict:
         self._set_base_url(position_id)
         res_json = self.request_get()
         return {

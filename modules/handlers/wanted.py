@@ -21,7 +21,7 @@ class WantedHandler(BaseHandler):
         }
         self.validated_params = filtered_params
 
-    def _insert_job_list(self, idx):
+    def _insert_job_list(self, idx: int):
         if idx:
             self.validated_params.update({'limit': 20, 'offset': 20 * idx})
 
@@ -38,8 +38,8 @@ class WantedHandler(BaseHandler):
         idx = 0
         is_continue = True
         while is_continue:
-            print(f'Wanted - {idx}번째 리스트 crawl')
             is_continue = self._insert_job_list(idx)
+            print(f'Wanted - {idx}번째 리스트 crawl')
             idx += 1
             sleep(.1)
         self.conn.commit()
