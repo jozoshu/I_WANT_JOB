@@ -6,10 +6,28 @@
 - Language: [Python 3.9.2](https://www.python.org/downloads/release/python-392/)
 - Database: PostgreSQL 12.7
 
+### 프로젝트 구조
+~~~bash
+$> git clone https://github.com/jozoshu/I_WANT_JOB.git
+
+.
+├── modules            # 모듈
+│   ├── crawlers
+│   ├── db
+│   └── handlers
+├── venv               # python 가상환경
+├── .env               # 환경변수 파일
+├── main.py            # 메인 실행파일
+└── requirements.txt   # 패키지 관리
+
+~~~
+
 # 1. Environment
 
-## 1.1 Set .env files
+## 1.1 Set .env file
 ~~~bash
+$> vim .env
+
 ## - Wanted - ##
 
 # 거주국가
@@ -33,7 +51,7 @@ DB_PASSWORD=...
 DB_PORT=5432
 ~~~
 
-### 1.1.1 Sample Table DDL
+### 1.1.1 Sample DDL
 ~~~sql
 CREATE TABLE public.tb_wtd_position (
     id bigserial NOT NULL,
@@ -63,7 +81,7 @@ CREATE TABLE public.tb_wtd_position_detail (
 );
 ~~~
 
-## 1.2 Set virtual environments
+## 1.2 Set virtual environment
 ~~~bash
 $> virtualenv venv --python=python3.9
 $> source venv/bin/activate

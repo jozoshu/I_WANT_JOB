@@ -15,4 +15,5 @@ class BaseHandler(ABC):
 
     @abstractmethod
     def handle(self, *args, **kwargs):
+        """handler 실행"""
         raise NotImplementedError('You Must Implement `handle` Method.')
