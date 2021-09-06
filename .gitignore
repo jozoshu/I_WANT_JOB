@@ -1,0 +1,16 @@
+#-- GITIGNORE FILES --#
+
+# Virtual Environment
+venv/
+
+# Dotenv File
+.env
+
+
+# Editor Setting Files (Pycharm, VSCode ...)
+.idea/
+.vscode/
+
+# Cache Files
+__pycache__/
+*.pyc
