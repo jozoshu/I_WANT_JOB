@@ -5,8 +5,8 @@ from modules.crawlers.wanted_crawlers import (
     WantedJobListCrawler,
     WantedPositionDetailCrawler
 )
-from modules.db.operations import Operator as op
-from modules.logging import get_logger
+from config.db.operations import Operator as op
+from config.logging import get_logger
 from .base import BaseHandler
 
 logger = get_logger(__name__)

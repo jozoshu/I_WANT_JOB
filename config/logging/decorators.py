@@ -1,6 +1,6 @@
 from functools import wraps
 
-from modules.logging import get_logger
+from . import get_logger
 from .utils import env_info
 
 

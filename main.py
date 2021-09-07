@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from modules.config import Config
+from modules.env import Env
 from modules.handlers.wanted import WantedHandler
 from modules.manager import HandleManager
 
@@ -21,7 +21,7 @@ def main():
         2. 각 handler 실행히여 정보 수집
     """
 
-    params = Config.get_params()
+    params = Env.get_search_params()
     manager = HandleManager()
     manager.add_handler(WantedHandler())
     manager.handle(params=params)
