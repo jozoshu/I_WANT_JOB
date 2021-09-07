@@ -16,9 +16,17 @@ class Logging:
         self._logger.setLevel(logging.DEBUG)
 
         logging_args = Env.get_logging_args()
-        handlers = map(lambda x: x.lower(), logging_args.get('handlers').split(','))
+        self._set_handlers(logging_args)
 
-        for handler in handlers:
+    def _set_handlers(self, logging_args):
+        handlers = logging_args.get('handlers').split(',')
+
+        file_handler = [x for x in handlers if x in ['FileHandler', 'RotatingFileHandler']]
+        if len(file_handler) > 1:
+            _handler = ', '.join(file_handler)
+            raise ValueError(f'You can choose just one File Handler, But: {_handler} in `LOG_HANDLER`')
+
+        for handler in map(lambda x: x.lower(), handlers):
             func = getattr(self, f'add_{handler}', None)
             if not func:
                 raise ValueError('Invalid `LOG_HANDLER`')
