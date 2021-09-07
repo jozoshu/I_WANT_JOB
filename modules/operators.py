@@ -1,6 +1,6 @@
 from psycopg2 import sql
 
-from .connections import DBConnection as db
+from config.db.connections import DBConnection as db
 
 
 class Operator:
@@ -15,16 +15,15 @@ class Operator:
         INSERT  INTO {table} (company_id, company, position_id, position, thumbnail, logo)
         SELECT  *
         FROM (
-                SELECT  UNNEST(%(company_id)s::int[]) AS company_id,
-                        UNNEST(%(company)s) AS company,
-                        UNNEST(%(position_id)s::int[]) AS position_id,
-                        UNNEST(%(position)s) AS position,
-                        UNNEST(%(thumbnail)s) AS thumbnail,
-                        UNNEST(%(logo)s) AS logo
+                SELECT  UNNEST(%(company_id)s::int[]) AS company_id
+                      , UNNEST(%(company)s) AS company
+                      , UNNEST(%(position_id)s::int[]) AS position_id
+                      , UNNEST(%(position)s) AS position
+                      , UNNEST(%(thumbnail)s) AS thumbnail
+                      , UNNEST(%(logo)s) AS logo
         ) AS a
         WHERE   a.position_id NOT IN (
-                SELECT  position_id
-                FROM    {table}
+                SELECT  position_id FROM {table}
         )
         """
         with conn.cursor() as cur:
