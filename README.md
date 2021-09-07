@@ -11,15 +11,17 @@
 $> git clone https://github.com/jozoshu/I_WANT_JOB.git
 
 .
-├── modules            # 모듈
-│   ├── crawlers
+├── config             # 환경 모듈
 │   ├── db
+│   └── logging
+├── logs               # 로그
+├── modules            # 실행 모듈
+│   ├── crawlers
 │   └── handlers
 ├── venv               # python 가상환경
 ├── .env               # 환경변수 파일
 ├── main.py            # 메인 실행파일
 └── requirements.txt   # 패키지 관리
-
 ~~~
 
 # 1. Environment
@@ -90,5 +92,5 @@ $> source venv/bin/activate
 
 ## 1.3 Run~!
 ~~~bash
-$> python main.py
+(venv) $> python main.py
 ~~~

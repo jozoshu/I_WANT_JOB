@@ -6,6 +6,9 @@ venv/
 # Dotenv File
 .env
 
+# Log files
+*.log
+
 
 # Editor Setting Files (Pycharm, VSCode ...)
 .idea/

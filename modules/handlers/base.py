@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from modules.db.connections import DBConnection as db
+from config.db.connections import DBConnection as db
 
 
 class BaseHandler(ABC):

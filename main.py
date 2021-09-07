@@ -1,14 +1,6 @@
-import os
-from pathlib import Path
-
-from dotenv import load_dotenv
-
-from modules.config import Config
+from config import Env
 from modules.handlers.wanted import WantedHandler
 from modules.manager import HandleManager
-
-BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'), verbose=True)
 
 
 def main():
@@ -21,7 +13,7 @@ def main():
         2. 각 handler 실행히여 정보 수집
     """
 
-    params = Config.get_params()
+    params = Env.get_search_params()
     manager = HandleManager()
     manager.add_handler(WantedHandler())
     manager.handle(params=params)

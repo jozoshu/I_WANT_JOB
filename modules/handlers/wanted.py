@@ -1,12 +1,15 @@
 from time import sleep
 from typing import Dict
 
+from config.db.operations import Operator as op
+from config.logging import get_logger
 from modules.crawlers.wanted_crawlers import (
     WantedJobListCrawler,
     WantedPositionDetailCrawler
 )
-from modules.db.operations import Operator as op
 from .base import BaseHandler
+
+logger = get_logger(__name__)
 
 
 class WantedHandler(BaseHandler):
@@ -31,7 +34,7 @@ class WantedHandler(BaseHandler):
             op.insert_wanted_position_list(self.conn, response)
             return True
         except Exception as e:
-            print(f"Wanted - 크롤링 에러: {e}")
+            logger.error(f"Wanted - 크롤링 에러: {e}")
             return False
 
     def set_job_list(self):
@@ -39,7 +42,7 @@ class WantedHandler(BaseHandler):
         is_continue = True
         while is_continue:
             is_continue = self._insert_job_list(idx)
-            print(f'Wanted - {idx}번째 리스트 crawl')
+            logger.info(f'Wanted - {idx}번째 리스트 crawl')
             idx += 1
             sleep(.1)
         self.conn.commit()
@@ -50,9 +53,9 @@ class WantedHandler(BaseHandler):
                 crawler = WantedPositionDetailCrawler()
                 response = crawler.crawl(position_id=position_id)
                 op.insert_wanted_position_detail(self.conn, response)
-                print(f'Wanted - 채용 상세 정보 저장 - {position_id}')
+                logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
-                print(f'Wanted - 채용 상세 정보 저장 에러 - {position_id} - {e}')
+                logger.error(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
             finally:
                 sleep(.1)
         self.conn.commit()
