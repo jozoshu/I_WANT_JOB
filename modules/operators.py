@@ -8,8 +8,7 @@ class Operator:
 
     @staticmethod
     def insert_wanted_position_list(conn=None, params=None):
-        if not conn:
-            conn = db.get_conn()
+        pg_conn = conn or db.get_conn()
 
         query = """
         INSERT  INTO {table} (company_id, company, position_id, position, thumbnail, logo)
@@ -26,23 +25,24 @@ class Operator:
                 SELECT  position_id FROM {table}
         )
         """
-        with conn.cursor() as cur:
+        with pg_conn.cursor() as cur:
             cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_wtd_position')), params)
+
+        if conn is None:
+            pg_conn.commit()
 
     @staticmethod
     def scan_wanted_position_list(conn=None):
-        if not conn:
-            conn = db.get_conn()
+        pg_conn = conn or db.get_conn()
 
         query = """SELECT position_id FROM {table}"""
-        with conn.cursor() as cur:
+        with pg_conn.cursor() as cur:
             cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_wtd_position')))
             return cur.fetchall()
 
     @staticmethod
     def insert_wanted_position_detail(conn=None, params=None):
-        if not conn:
-            conn = db.get_conn()
+        pg_conn = conn or db.get_conn()
 
         query = """
         INSERT  INTO {table} 
@@ -50,5 +50,8 @@ class Operator:
         VALUES  (%(position_id)s, %(position)s, %(company_id)s, %(company)s, %(intro)s, 
                 %(main_tasks)s, %(requirements)s, %(preferred_points)s, %(benefits)s)
         """
-        with conn.cursor() as cur:
+        with pg_conn.cursor() as cur:
             cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_wtd_position_detail')), params)
+
+        if conn is None:
+            pg_conn.commit()
