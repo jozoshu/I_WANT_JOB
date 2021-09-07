@@ -1,5 +1,11 @@
 from typing import List
 
+from config.logging import get_logger
+from config.logging.decorators import manager_logging
+from modules.handlers.base import BaseHandler
+
+logger = get_logger(__name__)
+
 
 class HandleManager:
     """각 Handler 들이 정상적으로 작동하도록 관리"""
@@ -7,14 +13,16 @@ class HandleManager:
     def __init__(self):
         self.handlers: List = []
 
-    def add_handlers(self, handler):
+    def add_handler(self, handler: BaseHandler):
+        assert isinstance(handler, BaseHandler)
         self.handlers.append(handler)
 
+    @manager_logging
     def handle(self, *args, **kwargs):
         for handler in self.handlers:
             try:
-                print(f'<{handler.__class__.__name__}> - START')
+                logger.info(f'<{handler.__class__.__name__}> - START')
                 handler.handle(*args, **kwargs)
-                print(f'<{handler.__class__.__name__}> - COMPLETE')
+                logger.info(f'<{handler.__class__.__name__}> - COMPLETE')
             except Exception as e:
-                print(f'<{handler.__class__.__name__}> - EXCEPTION:', e)
+                logger.error(f'<{handler.__class__.__name__}> - EXCEPTION: {e}')

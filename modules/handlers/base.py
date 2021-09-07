@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from modules.db.connections import DBConnection as db
+from config.db.connections import DBConnection as db
 
 
 class BaseHandler(ABC):
@@ -15,4 +15,5 @@ class BaseHandler(ABC):
 
     @abstractmethod
     def handle(self, *args, **kwargs):
+        """handler 실행"""
         raise NotImplementedError('You Must Implement `handle` Method.')
