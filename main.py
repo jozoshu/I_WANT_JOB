@@ -1,14 +1,6 @@
-import os
-from pathlib import Path
-
-from dotenv import load_dotenv
-
-from modules.env import Env
+from config.env import Env
 from modules.handlers.wanted import WantedHandler
-from modules.manager import HandleManager
-
-BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'), verbose=True)
+from config.manager import HandleManager
 
 
 def main():

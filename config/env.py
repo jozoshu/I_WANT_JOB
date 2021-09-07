@@ -1,4 +1,10 @@
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'), verbose=True)
 
 
 class Env:
@@ -22,4 +28,10 @@ class Env:
             'user': os.environ.get('DB_USER'),
             'password': os.environ.get('DB_PASSWORD'),
             'port': os.environ.get('DB_PORT'),
+        }
+
+    @staticmethod
+    def get_logging_args():
+        return {
+            'handlers': os.environ.get('LOG_HANDLER'),
         }

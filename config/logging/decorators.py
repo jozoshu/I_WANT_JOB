@@ -1,13 +1,13 @@
 from functools import wraps
 
-from . import get_logger
+from config import logging
 from .utils import env_info
 
 
 def manager_logging(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        logger = get_logger('main')
+        logger = logging.get_logger('main')
         env_info(logger)
 
         logger.info('RUNNING MANAGER')
