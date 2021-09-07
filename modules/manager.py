@@ -1,8 +1,8 @@
 from typing import List
 
+from config.logging import get_logger
 from config.logging.decorators import manager_logging
 from modules.handlers.base import BaseHandler
-from config.logging import get_logger
 
 logger = get_logger(__name__)
 

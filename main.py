@@ -1,6 +1,6 @@
-from config.env import Env
+from config import Env
 from modules.handlers.wanted import WantedHandler
-from config.manager import HandleManager
+from modules.manager import HandleManager
 
 
 def main():

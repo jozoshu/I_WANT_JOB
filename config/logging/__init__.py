@@ -1,6 +1,6 @@
 import logging
 
-from config.env import Env
+from config import Env
 
 
 class Logging:

@@ -1,6 +1,6 @@
 import psycopg2 as pg2
 
-from config.env import Env
+from config import Env
 
 
 class DBConnection:
