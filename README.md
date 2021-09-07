@@ -14,6 +14,7 @@ $> git clone https://github.com/jozoshu/I_WANT_JOB.git
 ├── config             # 환경 모듈
 │   ├── db
 │   └── logging
+├── logs               # 로그
 ├── modules            # 실행 모듈
 │   ├── crawlers
 │   └── handlers
@@ -21,7 +22,6 @@ $> git clone https://github.com/jozoshu/I_WANT_JOB.git
 ├── .env               # 환경변수 파일
 ├── main.py            # 메인 실행파일
 └── requirements.txt   # 패키지 관리
-
 ~~~
 
 # 1. Environment
