@@ -1,12 +1,12 @@
 from time import sleep
 from typing import Dict
 
-from config.db.operations import Operator as op
 from config.logging import get_logger
 from modules.crawlers.wanted_crawlers import (
     WantedJobListCrawler,
     WantedPositionDetailCrawler
 )
+from modules.operators import Operator as op
 from .base import BaseHandler
 
 logger = get_logger(__name__)
