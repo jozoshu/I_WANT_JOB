@@ -1,3 +1,6 @@
+from typing import Dict
+from datetime import date, datetime
+
 from psycopg2 import sql
 
 from config.db.connections import DBConnection as db
@@ -7,7 +10,7 @@ class Operator:
     """SQL 작업 오퍼레이터"""
 
     @staticmethod
-    def insert_wanted_position_list(conn=None, params=None):
+    def insert_wanted_position_list(conn=None, params: Dict = None):
         pg_conn = conn or db.get_conn()
 
         query = """
@@ -41,15 +44,16 @@ class Operator:
             return cur.fetchall()
 
     @staticmethod
-    def insert_wanted_position_detail(conn=None, params=None):
+    def insert_wanted_position_detail(conn=None, params: Dict = None, crawl_date: date = None):
         pg_conn = conn or db.get_conn()
 
         query = """
         INSERT  INTO {table} 
-                (position_id, position, company_id, company, intro, main_tasks, requirements, preferred_points, benefits)
-        VALUES  (%(position_id)s, %(position)s, %(company_id)s, %(company)s, %(intro)s, 
-                %(main_tasks)s, %(requirements)s, %(preferred_points)s, %(benefits)s)
+                (position_id, position, company_id, company, intro, main_tasks, requirements, preferred_points, benefits, crawl_date)
+        VALUES  (%(position_id)s, %(position)s, %(company_id)s, %(company)s, %(intro)s,
+                %(main_tasks)s, %(requirements)s, %(preferred_points)s, %(benefits)s, %(crawl_date)s)
         """
+        params.update({'crawl_date': crawl_date or datetime.now()})
         with pg_conn.cursor() as cur:
             cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_wtd_position_detail')), params)
 
