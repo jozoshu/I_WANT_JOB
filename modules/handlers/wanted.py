@@ -1,8 +1,5 @@
-from datetime import datetime
 from time import sleep
 from typing import Dict
-
-from pytz import timezone
 
 from config.logging import get_logger
 from modules.crawlers.wanted_crawlers import (
@@ -12,16 +9,16 @@ from modules.crawlers.wanted_crawlers import (
 from modules.operators import Operator as op
 from .base import BaseHandler
 
-KST = timezone('Asia/Seoul')
-
 logger = get_logger(__name__)
 
 
 class WantedHandler(BaseHandler):
+
+    NAME = 'WANTED'
+
     def __init__(self):
         super().__init__()
         self.validated_params: Dict = {}
-        self.crawl_date = KST.localize(datetime.now())
 
     def validate_param(self, params: Dict):
         filtered_params = {
@@ -50,19 +47,18 @@ class WantedHandler(BaseHandler):
             is_continue = self._insert_job_list(idx)
             logger.info(f'Wanted - {idx}번째 리스트 crawl')
             idx += 1
-            self.conn.commit()
             sleep(.1)
+        self.conn.commit()
 
     def set_position_details(self):
         for position_id, *_ in op.scan_wanted_position_list():
             try:
                 crawler = WantedPositionDetailCrawler()
                 response = crawler.crawl(position_id=position_id)
-                op.insert_wanted_position_detail(self.conn, response, self.crawl_date)
-                self.conn.commit()
+                op.insert_wanted_position_detail(params=response, crawl_date=self.crawl_date)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
-                logger.error(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
+                logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
             finally:
                 sleep(.1)
 
@@ -76,3 +72,4 @@ class WantedHandler(BaseHandler):
         self.validate_param(params)
         self.set_job_list()
         self.set_position_details()
+        self.update_last_crawl_date()

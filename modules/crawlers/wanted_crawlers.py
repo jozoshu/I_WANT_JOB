@@ -23,7 +23,7 @@ class WantedJobListCrawler(BaseCrawler):
         super().__init__(base_url)
 
     def crawl(self, params: Dict) -> Dict:
-        res_json = self.request_get(params)
+        res_json = self.request_get(params, timeout=10)
         if not res_json['data']:
             raise ValueError('더 이상 채용공고 없음')
         return {
@@ -62,7 +62,7 @@ class WantedPositionDetailCrawler(BaseCrawler):
 
     def crawl(self, position_id: int) -> Dict:
         self._set_base_url(position_id)
-        res_json = self.request_get()
+        res_json = self.request_get(timeout=10)
         return {
             'position_id': position_id,
             'position': res_json['job']['position'],

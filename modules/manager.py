@@ -25,4 +25,4 @@ class HandleManager:
                 handler.handle(*args, **kwargs)
                 logger.info(f'<{handler.__class__.__name__}> - COMPLETE')
             except Exception as e:
-                logger.error(f'<{handler.__class__.__name__}> - EXCEPTION: {e}')
+                logger.exception(f'<{handler.__class__.__name__}> - EXCEPTION: {e}')

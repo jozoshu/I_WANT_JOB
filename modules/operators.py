@@ -59,3 +59,25 @@ class Operator:
 
         if conn is None:
             pg_conn.commit()
+
+    @staticmethod
+    def update_last_crawl_date(conn=None, handler_type: str = None, crawl_date: date = None):
+        assert handler_type, 'The `handler_type` Must Not Be Null!'
+
+        pg_conn = conn or db.get_conn()
+
+        query = """
+        UPDATE  {table}
+        SET     last_crawl_date = %(crawl_date)s
+        WHERE   handler_type = %(handler_type)s
+        """
+        params = {
+            'crawl_date': crawl_date or datetime.now(),
+            'handler_type': handler_type,
+        }
+        with pg_conn.cursor() as cur:
+            q = sql.SQL(query).format(table=sql.Identifier('tb_op_last_crawl_date'))
+            cur.execute(q, params)
+
+        if conn is None:
+            pg_conn.commit()
