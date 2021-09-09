@@ -13,6 +13,9 @@ logger = get_logger(__name__)
 
 
 class WantedHandler(BaseHandler):
+
+    NAME = 'WANTED'
+
     def __init__(self):
         super().__init__()
         self.validated_params: Dict = {}
@@ -52,13 +55,12 @@ class WantedHandler(BaseHandler):
             try:
                 crawler = WantedPositionDetailCrawler()
                 response = crawler.crawl(position_id=position_id)
-                op.insert_wanted_position_detail(self.conn, response)
+                op.insert_wanted_position_detail(params=response, crawl_date=self.crawl_date)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
-                logger.error(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
+                logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
             finally:
                 sleep(.1)
-        self.conn.commit()
 
     def handle(self, params: Dict):
         """
@@ -70,3 +72,4 @@ class WantedHandler(BaseHandler):
         self.validate_param(params)
         self.set_job_list()
         self.set_position_details()
+        self.update_last_crawl_date()
