@@ -12,7 +12,7 @@ $> git clone https://github.com/jozoshu/I_WANT_JOB.git
 
 .
 ├── config             # 환경 모듈
-│   ├── db
+│   ├── connections
 │   └── logging
 ├── logs               # 로그
 ├── modules            # 실행 모듈
@@ -88,6 +88,29 @@ CREATE TABLE public.tb_wtd_position_detail
 CREATE UNIQUE INDEX tb_wtd_position_detail_crawl_date_idx
     ON public.tb_wtd_position_detail USING btree
     (crawl_date, position_id);
+
+CREATE TABLE public.tb_op_process_listing
+(
+    id bigserial NOT NULL,
+    handler_type character varying(10) NOT NULL,
+    idx smallint NOT NULL,
+    status smallint NOT NULL,
+    created_dtm timestamp with time zone DEFAULT now(),
+    CONSTRAINT tb_op_process_listing_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.tb_op_process_collecting
+(
+    id bigserial NOT NULL,
+    handler_type character varying(10) NOT NULL,
+    position_id integer NOT NULL,
+    position character varying(250) NOT NULL,
+    company character varying(50),
+    status smallint NOT NULL DEFAULT 0,
+    created_dtm timestamp with time zone DEFAULT now(),
+    updated_dtm timestamp with time zone DEFAULT now(),
+    CONSTRAINT tb_op_process_publish_pkey PRIMARY KEY (id)
+);
 
 CREATE TABLE public.tb_op_last_crawl_date
 (

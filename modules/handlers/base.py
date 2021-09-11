@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pytz import timezone
 
-from config.db.connections import DBConnection as db
+from config.connections.db import DBConnection as db
 from modules.operators import Operator as op
 
 KST = timezone('Asia/Seoul')

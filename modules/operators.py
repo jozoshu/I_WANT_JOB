@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from psycopg2 import sql
 
-from config.db.connections import DBConnection as db
+from config.connections.db import DBConnection as db
 
 
 class Operator:
