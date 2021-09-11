@@ -34,13 +34,20 @@ class WantedHandler(BaseHandler):
         try:
             crawler = WantedJobListCrawler()
             response = crawler.crawl(params=self.validated_params)
-            op.insert_wanted_position_list(self.conn, response)
+            op.insert_wanted_position_list(response, self.conn)
+            op.insert_collecting_list(self.name, response)
+            op.set_process_listing_status(self.name, idx, 200, self.conn)
+            self.conn.commit()
             return True
         except Exception as e:
+            op.set_process_listing_status(self.name, idx, 500, self.conn)
             logger.error(f"Wanted - 크롤링 에러: {e}")
+            self.conn.commit()
             return False
 
     def set_job_list(self):
+        op.initialize_collecting_process(self.name)
+
         idx = 0
         is_continue = True
         while is_continue:
@@ -48,16 +55,17 @@ class WantedHandler(BaseHandler):
             logger.info(f'Wanted - {idx}번째 리스트 crawl')
             idx += 1
             sleep(.1)
-        self.conn.commit()
 
     def set_position_details(self):
-        for position_id, *_ in op.scan_wanted_position_list():
+        for position_id, *_ in op.scan_position_list(self.name):
             try:
                 crawler = WantedPositionDetailCrawler()
                 response = crawler.crawl(position_id=position_id)
-                op.insert_wanted_position_detail(params=response, crawl_date=self.crawl_date)
+                op.insert_wanted_position_detail(response, self.crawl_date)
+                op.set_process_collecting_status(self.name, position_id, 200)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
+                op.set_process_collecting_status(self.name, position_id, 500)
                 logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
             finally:
                 sleep(.1)
