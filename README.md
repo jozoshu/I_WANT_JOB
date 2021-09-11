@@ -12,7 +12,7 @@ $> git clone https://github.com/jozoshu/I_WANT_JOB.git
 
 .
 ├── config             # 환경 모듈
-│   ├── db
+│   ├── connections
 │   └── logging
 ├── logs               # 로그
 ├── modules            # 실행 모듈
@@ -55,31 +55,70 @@ DB_PORT=5432
 
 ### 1.1.1 Sample DDL
 ~~~sql
-CREATE TABLE public.tb_wtd_position (
+CREATE TABLE public.tb_wtd_position
+(
     id bigserial NOT NULL,
-    company_id int NOT NULL,
-    company varchar(50) NOT NULL,
-    position_id int NOT NULL,
-    position varchar(250) NOT NULL,
+    company_id integer NOT NULL,
+    company character varying(50) NOT NULL,
+    position_id integer NOT NULL,
+    position character varying(250) NOT NULL,
     thumbnail text,
     logo text,
-    created_dtm timestamptz DEFAULT now(),
+    created_dtm timestamp with time zone DEFAULT now(),
     CONSTRAINT tb_wtd_position_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE public.tb_wtd_position_detail (
+CREATE TABLE public.tb_wtd_position_detail
+(
     id bigserial NOT NULL,
-    position_id int NOT NULL,
-    position varchar(250) NOT NULL,
-    company_id int NOT NULL,
-    company varchar(50) NULL,
+    position_id integer NOT NULL,
+    position character varying(250) NOT NULL,
+    company_id integer NOT NULL,
+    company character varying(50),
     intro text NOT NULL,
     main_tasks text NOT NULL,
     requirements text NOT NULL,
     preferred_points text NOT NULL,
     benefits text NOT NULL,
-    created_dtm timestamptz DEFAULT now(),
+    crawl_date date DEFAULT now(),
+    created_dtm timestamp with time zone DEFAULT now(),
     CONSTRAINT tb_wtd_position_detail_pkey PRIMARY KEY (id)
+);
+
+CREATE UNIQUE INDEX tb_wtd_position_detail_crawl_date_idx
+    ON public.tb_wtd_position_detail USING btree
+    (crawl_date, position_id);
+
+CREATE TABLE public.tb_op_process_listing
+(
+    id bigserial NOT NULL,
+    handler_type character varying(10) NOT NULL,
+    idx smallint NOT NULL,
+    status smallint NOT NULL,
+    created_dtm timestamp with time zone DEFAULT now(),
+    CONSTRAINT tb_op_process_listing_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.tb_op_process_collecting
+(
+    id bigserial NOT NULL,
+    handler_type character varying(10) NOT NULL,
+    position_id integer NOT NULL,
+    position character varying(250) NOT NULL,
+    company character varying(50),
+    status smallint NOT NULL DEFAULT 0,
+    created_dtm timestamp with time zone DEFAULT now(),
+    updated_dtm timestamp with time zone DEFAULT now(),
+    CONSTRAINT tb_op_process_publish_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.tb_op_last_crawl_date
+(
+    id serial NOT NULL,
+    handler_type character varying(10) NOT NULL,
+    last_crawl_date date DEFAULT now(),
+    created_dtm timestamp with time zone DEFAULT now(),
+    CONSTRAINT tb_op_last_crawl_date_pkey PRIMARY KEY (id)
 );
 ~~~
 
