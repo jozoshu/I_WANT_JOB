@@ -35,5 +35,5 @@ class BaseHandler(ABC):
 
     def update_last_crawl_date(self):
         """최근 수집날짜 저장"""
-        op.update_last_crawl_date(self.conn, self.name, self.crawl_date)
+        op.update_last_crawl_date(self.name, self.crawl_date, self.conn)
         self.conn.commit()

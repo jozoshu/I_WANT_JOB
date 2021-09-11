@@ -34,7 +34,7 @@ class WantedHandler(BaseHandler):
         try:
             crawler = WantedJobListCrawler()
             response = crawler.crawl(params=self.validated_params)
-            op.insert_wanted_position_list(self.conn, response)
+            op.insert_wanted_position_list(response, self.conn)
             op.insert_collecting_list(self.name, response)
             op.set_process_listing_status(self.name, idx, 200, self.conn)
             self.conn.commit()
@@ -61,7 +61,7 @@ class WantedHandler(BaseHandler):
             try:
                 crawler = WantedPositionDetailCrawler()
                 response = crawler.crawl(position_id=position_id)
-                op.insert_wanted_position_detail(params=response, crawl_date=self.crawl_date)
+                op.insert_wanted_position_detail(response, self.crawl_date)
                 op.set_process_collecting_status(self.name, position_id, 200)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
