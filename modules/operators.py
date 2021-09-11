@@ -35,12 +35,13 @@ class Operator:
             pg_conn.commit()
 
     @staticmethod
-    def scan_wanted_position_list(conn=None):
+    def scan_position_list(handler_type, conn=None):
         pg_conn = conn or db.get_conn()
 
-        query = """SELECT position_id FROM {table}"""
+        query = """SELECT position_id FROM {table} WHERE handler_type=%(handler_type)s ORDER BY id"""
+        params = {'handler_type': handler_type}
         with pg_conn.cursor() as cur:
-            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_wtd_position')))
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_collecting')), params)
             return cur.fetchall()
 
     @staticmethod
@@ -80,21 +81,37 @@ class Operator:
             pg_conn.commit()
 
     @staticmethod
-    def set_process_collection_initialize(handler_type: str, detail_table: str, conn=None):
+    def initialize_collecting_process(handler_type: str, conn=None):
+        pg_conn = conn or db.get_conn()
+
+        query = """
+        DELETE FROM {table} WHERE handler_type=%(handler_type)s
+        """
+        params = {'handler_type': handler_type}
+        with pg_conn.cursor() as cur:
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_listing')), params)
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_collecting')), params)
+
+        if conn is None:
+            pg_conn.commit()
+
+    @staticmethod
+    def insert_collecting_list(handler_type: str, params: Dict, conn=None):
         pg_conn = conn or db.get_conn()
 
         query = """
         INSERT  INTO {table} (handler_type, position_id, position, company)
-        SELECT  %(handler_type)s, position_id, position, company
-        FROM    {detail_table}
+        SELECT  *
+        FROM (
+                SELECT  %(handler_type)s AS handler_type
+                      , UNNEST(%(position_id)s::int[]) AS position_id
+                      , UNNEST(%(position)s) AS position
+                      , UNNEST(%(company)s) AS company
+        ) AS a
         """
-        params = {'handler_type': handler_type}
+        params.update({'handler_type': handler_type})
         with pg_conn.cursor() as cur:
-            cur.execute(
-                sql.SQL(query).format(
-                    table=sql.Identifier('tb_op_process_collecting'),
-                    detail_table=sql.Identifier(detail_table)
-                ), params)
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_collecting')), params)
 
         if conn is None:
             pg_conn.commit()
