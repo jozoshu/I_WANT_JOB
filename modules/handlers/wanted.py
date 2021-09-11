@@ -40,7 +40,7 @@ class WantedHandler(BaseHandler):
             self.conn.commit()
             return True
         except Exception as e:
-            op.set_process_listing_status(self.name, idx, 400, self.conn)
+            op.set_process_listing_status(self.name, idx, 500, self.conn)
             logger.error(f"Wanted - 크롤링 에러: {e}")
             self.conn.commit()
             return False
@@ -65,7 +65,7 @@ class WantedHandler(BaseHandler):
                 op.set_process_collecting_status(self.name, position_id, 200)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
-                op.set_process_collecting_status(self.name, position_id, 400)
+                op.set_process_collecting_status(self.name, position_id, 500)
                 logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
             finally:
                 sleep(.1)
@@ -78,6 +78,6 @@ class WantedHandler(BaseHandler):
             3. 각 공고별로 채용 상세 정보를 가져와서 저장
         """
         self.validate_param(params)
-        # self.set_job_list()
+        self.set_job_list()
         self.set_position_details()
         self.update_last_crawl_date()

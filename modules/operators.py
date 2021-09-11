@@ -38,7 +38,13 @@ class Operator:
     def scan_position_list(handler_type, conn=None):
         pg_conn = conn or db.get_conn()
 
-        query = """SELECT position_id FROM {table} WHERE handler_type=%(handler_type)s ORDER BY id"""
+        query = """
+        SELECT  position_id 
+        FROM    {table} 
+        WHERE   handler_type = %(handler_type)s 
+        AND     status IN (0, 500)
+        ORDER BY id
+        """
         params = {'handler_type': handler_type}
         with pg_conn.cursor() as cur:
             cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_collecting')), params)
@@ -122,7 +128,7 @@ class Operator:
 
         query = """
         UPDATE  {table}
-        SET     status = %(status)s
+        SET     status = %(status)s, updated_dtm = now()
         WHERE   handler_type = %(handler_type)s
         AND     position_id = %(position_id)s
         """
