@@ -35,8 +35,10 @@ class WantedHandler(BaseHandler):
             crawler = WantedJobListCrawler()
             response = crawler.crawl(params=self.validated_params)
             op.insert_wanted_position_list(self.conn, response)
+            op.set_process_listing_status(self.conn, self.name, idx, 200, 'tb_op_process_listing')
             return True
         except Exception as e:
+            op.set_process_listing_status(self.conn, self.name, idx, 400, 'tb_op_process_listing')
             logger.error(f"Wanted - 크롤링 에러: {e}")
             return False
 

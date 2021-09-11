@@ -61,6 +61,25 @@ class Operator:
             pg_conn.commit()
 
     @staticmethod
+    def set_process_listing_status(conn=None, handler_type: str = None, idx: int = None, status: int = None, table: str = None):
+        pg_conn = conn or db.get_conn()
+
+        query = """
+        INSERT  INTO {table} (handler_type, idx, status)
+        VALUES  (%(handler_type)s, %(idx)s, %(status)s)
+        """
+        params = {
+            'handler_type': handler_type,
+            'idx': idx,
+            'status': status,
+        }
+        with pg_conn.cursor() as cur:
+            cur.execute(sql.SQL(query).format(table=sql.Identifier(table)), params)
+
+        if conn is None:
+            pg_conn.commit()
+
+    @staticmethod
     def update_last_crawl_date(conn=None, handler_type: str = None, crawl_date: date = None):
         assert handler_type, 'The `handler_type` Must Not Be Null!'
 
@@ -76,8 +95,7 @@ class Operator:
             'handler_type': handler_type,
         }
         with pg_conn.cursor() as cur:
-            q = sql.SQL(query).format(table=sql.Identifier('tb_op_last_crawl_date'))
-            cur.execute(q, params)
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_last_crawl_date')), params)
 
         if conn is None:
             pg_conn.commit()
