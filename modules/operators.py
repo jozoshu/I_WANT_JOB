@@ -61,7 +61,7 @@ class Operator:
             pg_conn.commit()
 
     @staticmethod
-    def set_process_listing_status(conn=None, handler_type: str = None, idx: int = None, status: int = None, table: str = None):
+    def set_process_listing_status(handler_type: str, idx: int, status: int, conn=None):
         pg_conn = conn or db.get_conn()
 
         query = """
@@ -74,7 +74,48 @@ class Operator:
             'status': status,
         }
         with pg_conn.cursor() as cur:
-            cur.execute(sql.SQL(query).format(table=sql.Identifier(table)), params)
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_listing')), params)
+
+        if conn is None:
+            pg_conn.commit()
+
+    @staticmethod
+    def set_process_collection_initialize(handler_type: str, detail_table: str, conn=None):
+        pg_conn = conn or db.get_conn()
+
+        query = """
+        INSERT  INTO {table} (handler_type, position_id, position, company)
+        SELECT  %(handler_type)s, position_id, position, company
+        FROM    {detail_table}
+        """
+        params = {'handler_type': handler_type}
+        with pg_conn.cursor() as cur:
+            cur.execute(
+                sql.SQL(query).format(
+                    table=sql.Identifier('tb_op_process_collecting'),
+                    detail_table=sql.Identifier(detail_table)
+                ), params)
+
+        if conn is None:
+            pg_conn.commit()
+
+    @staticmethod
+    def set_process_collecting_status(handler_type: str, position_id: int, status: int, conn=None):
+        pg_conn = conn or db.get_conn()
+
+        query = """
+        UPDATE  {table}
+        SET     status = %(status)s
+        WHERE   handler_type = %(handler_type)s
+        AND     position_id = %(position_id)s
+        """
+        params = {
+            'status': status,
+            'handler_type': handler_type,
+            'position_id': position_id,
+        }
+        with pg_conn.cursor() as cur:
+            cur.execute(sql.SQL(query).format(table=sql.Identifier('tb_op_process_collecting')), params)
 
         if conn is None:
             pg_conn.commit()

@@ -35,10 +35,10 @@ class WantedHandler(BaseHandler):
             crawler = WantedJobListCrawler()
             response = crawler.crawl(params=self.validated_params)
             op.insert_wanted_position_list(self.conn, response)
-            op.set_process_listing_status(self.conn, self.name, idx, 200, 'tb_op_process_listing')
+            op.set_process_listing_status(self.name, idx, 200, self.conn)
             return True
         except Exception as e:
-            op.set_process_listing_status(self.conn, self.name, idx, 400, 'tb_op_process_listing')
+            op.set_process_listing_status(self.name, idx, 400, self.conn)
             logger.error(f"Wanted - 크롤링 에러: {e}")
             return False
 
@@ -53,13 +53,16 @@ class WantedHandler(BaseHandler):
         self.conn.commit()
 
     def set_position_details(self):
+        op.set_process_collection_initialize(self.name, 'tb_wtd_position_detail')
         for position_id, *_ in op.scan_wanted_position_list():
             try:
                 crawler = WantedPositionDetailCrawler()
                 response = crawler.crawl(position_id=position_id)
                 op.insert_wanted_position_detail(params=response, crawl_date=self.crawl_date)
+                op.set_process_collecting_status(self.name, position_id, 200)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
             except Exception as e:
+                op.set_process_collecting_status(self.name, position_id, 400)
                 logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
             finally:
                 sleep(.1)
@@ -72,6 +75,6 @@ class WantedHandler(BaseHandler):
             3. 각 공고별로 채용 상세 정보를 가져와서 저장
         """
         self.validate_param(params)
-        self.set_job_list()
+        # self.set_job_list()
         self.set_position_details()
         self.update_last_crawl_date()
