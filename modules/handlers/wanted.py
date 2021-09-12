@@ -1,6 +1,8 @@
 from time import sleep
 from typing import Dict
 
+from psycopg2 import IntegrityError
+
 from config.logging import get_logger
 from modules.crawlers.wanted_crawlers import (
     WantedJobListCrawler,
@@ -64,6 +66,9 @@ class WantedHandler(BaseHandler):
                 op.insert_wanted_position_detail(response, self.crawl_date)
                 op.set_process_collecting_status(self.name, position_id, 200)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
+            except IntegrityError as e:
+                op.set_process_collecting_status(self.name, position_id, 300)
+                logger.info(f'Wanted - 채용공고 상세 정보 저장 DB 에러 - position_id: {position_id} - {e}')
             except Exception as e:
                 op.set_process_collecting_status(self.name, position_id, 500)
                 logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')
