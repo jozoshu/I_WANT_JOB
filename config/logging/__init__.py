@@ -1,14 +1,14 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from config import Env
+from config import BASE_DIR, Env
 
 
 class Logging:
     """로깅 모듈"""
 
     DEFAULT_FMT = '[%(asctime)s] - %(name)s - [%(levelname)s] - %(message)s'
-    DEFAULT_FILENAME = 'logs/info.log'
+    DEFAULT_FILENAME = f'{BASE_DIR}/logs/info.log'
     DEFAULT_MAX_BYTES = 1024 * 1024 * 1  # 1MB
 
     def __init__(self, name: str = None):
