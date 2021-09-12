@@ -71,6 +71,6 @@ class WantedPositionDetailCrawler(BaseCrawler):
             'intro': res_json['job']['detail']['intro'],
             'main_tasks': res_json['job']['detail']['main_tasks'],
             'requirements': res_json['job']['detail']['requirements'],
-            'preferred_points': res_json['job']['detail']['preferred_points'],
+            'preferred_points': res_json['job']['detail'].get('preferred_points', ''),
             'benefits': res_json['job']['detail']['benefits'],
         }
