@@ -14,7 +14,7 @@ class BaseHandler(ABC):
 
     def __init__(self):
         self._conn = db.get_conn()
-        self.crawl_date = KST.localize(datetime.now()).date()
+        self.crawl_date = datetime.now(KST).date()
 
     @property
     def conn(self):
