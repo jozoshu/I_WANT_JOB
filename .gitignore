@@ -9,6 +9,9 @@ venv/
 # Log files
 *.log
 
+# AWS Setting files
+.aws/
+
 
 # Editor Setting Files (Pycharm, VSCode ...)
 .idea/
@@ -17,3 +20,6 @@ venv/
 # Cache Files
 __pycache__/
 *.pyc
+
+# MacOS System Files
+.DS_Store
