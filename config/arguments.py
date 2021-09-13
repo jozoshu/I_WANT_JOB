@@ -5,11 +5,6 @@ class ArgumentHandler:
     def __init__(self, args):
         self.argument_list = args[1:]
         self.arg_dict = {}
-        self._set_default()
-
-    @staticmethod
-    def _set_default():
-        os.environ.setdefault('CRAWLER_DEFAULT_ENV', 'local')
 
     def _validate_key(self, key: str):
         if not key.startswith('--'):
@@ -27,9 +22,14 @@ class ArgumentHandler:
             if k == 'env':
                 os.environ.setdefault('CRAWLER_DEFAULT_ENV', v[0])
 
+    @staticmethod
+    def set_default():
+        os.environ.setdefault('CRAWLER_DEFAULT_ENV', 'local')
+
     def handle(self):
         self.parse()
         self.processing()
+        self.set_default()
 
 
 def handle_arguments(args):

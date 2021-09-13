@@ -10,11 +10,6 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'level': 'INFO',
-            'formatter': 'default',
-        },
         'file_info': {
             'class': 'logging.handlers.RotatingFileHandler',
             'level': 'INFO',
@@ -24,7 +19,7 @@ LOGGING = {
     },
     'loggers': {
         'main': {
-            'handlers': ['console', 'file_info'],
+            'handlers': ['file_info'],
             'level': 'DEBUG',
         }
     }
