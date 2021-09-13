@@ -1,7 +1,7 @@
 import os
 
+env = os.environ.get('CRAWLER_DEFAULT_ENV')
 
-env = os.environ.get('ENV')
 
 lib = __import__(f'config.settings.{env}', fromlist=['*'])
 
