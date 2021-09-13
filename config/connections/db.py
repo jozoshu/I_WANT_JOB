@@ -1,6 +1,6 @@
 import psycopg2 as pg2
 
-from config import Env
+from config import settings
 
 
 class DBConnection:
@@ -8,4 +8,10 @@ class DBConnection:
 
     @staticmethod
     def get_conn():
-        return pg2.connect(**Env.get_conn_params())
+        return pg2.connect(
+            host=settings.DB_HOST,
+            dbname=settings.DB_NAME,
+            user=settings.DB_USER,
+            password=settings.DB_PASSWORD,
+            port=settings.DB_PORT,
+        )

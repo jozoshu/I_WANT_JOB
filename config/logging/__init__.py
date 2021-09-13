@@ -1,69 +1,37 @@
-import logging
-from logging.handlers import RotatingFileHandler
+import logging as _logging
+import logging.config
 
-from config import BASE_DIR, Env
+from config import settings
 
 
 class Logging:
     """로깅 모듈"""
 
     DEFAULT_FMT = '[%(asctime)s] - %(name)s - [%(levelname)s] - %(message)s'
-    DEFAULT_FILENAME = f'{BASE_DIR}/logs/info.log'
+    DEFAULT_FILENAME = f'{settings.BASE_DIR}/logs/info.log'
     DEFAULT_MAX_BYTES = 1024 * 1024 * 1  # 1MB
 
-    def __init__(self, name: str = None):
-        self._logger = logging.getLogger(name)
-        self._logger.setLevel(logging.DEBUG)
+    def __init__(self):
+        config = self._set_parameter(settings.LOGGING)
+        _logging.config.dictConfig(config)
 
-        logging_args = Env.get_logging_args()
-        self._set_handlers(logging_args)
+    def _scan_modules_dir(self):
+        return ['modules.handlers.wanted']
 
-    def _set_handlers(self, logging_args):
-        handlers = logging_args.get('handlers').split(',')
+    def _set_parameter(self, logging_env):
+        loggers = logging_env['loggers'].get('main')
 
-        file_handler = [x for x in handlers if x in ['FileHandler', 'RotatingFileHandler']]
-        if len(file_handler) > 1:
-            _handler = ', '.join(file_handler)
-            raise ValueError(f'You can choose just one File Handler, But: {_handler} in `LOG_HANDLER`')
+        for log in self._scan_modules_dir():
+            logging_env['loggers'].update({log: loggers})
 
-        for handler in map(lambda x: x.lower(), handlers):
-            func = getattr(self, f'add_{handler}', None)
-            if not func:
-                raise ValueError('Invalid `LOG_HANDLER`')
-            func()
+        return logging_env
 
-    def add_streamhandler(self):
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.INFO)
+    def get_logger(self, name):
+        return _logging.getLogger(name)
 
-        formatter = logging.Formatter(self.DEFAULT_FMT)
-        handler.setFormatter(formatter)
-        self._logger.addHandler(handler)
 
-    def add_filehandler(self, filename: str = None):
-        filename = filename or self.DEFAULT_FILENAME
-        handler = logging.FileHandler(filename, mode='a')
-        handler.setLevel(logging.INFO)
-
-        formatter = logging.Formatter(self.DEFAULT_FMT)
-        handler.setFormatter(formatter)
-        self._logger.addHandler(handler)
-
-    def add_rotatingfilehandler(self, filename: str = None):
-        filename = filename or self.DEFAULT_FILENAME
-        handler = RotatingFileHandler(
-            filename, mode='a', maxBytes=self.DEFAULT_MAX_BYTES, backupCount=100
-        )
-        handler.setLevel(logging.INFO)
-
-        formatter = logging.Formatter(self.DEFAULT_FMT)
-        handler.setFormatter(formatter)
-        self._logger.addHandler(handler)
-
-    @property
-    def logger(self):
-        return self._logger
+l = Logging()
 
 
 def get_logger(name: str = None):
-    return Logging(name).logger
+    return l.get_logger(name)

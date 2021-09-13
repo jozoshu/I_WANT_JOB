@@ -1,4 +1,4 @@
-from config import Env
+from modules.params import SearchParams
 from modules.handlers.wanted import WantedHandler
 from modules.manager import HandleManager
 
@@ -13,7 +13,7 @@ def main():
         2. 각 handler 실행히여 정보 수집
     """
 
-    params = Env.get_search_params()
+    params = SearchParams.get_search_params()
     manager = HandleManager()
     manager.add_handler(WantedHandler())
     manager.handle(params=params)
