@@ -3,7 +3,8 @@
 # Virtual Environment
 venv/
 
-# Dotenv File
+# Env Value File
+config/settings/local.py
 .env
 
 # Log files

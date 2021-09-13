@@ -14,7 +14,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'level': 'INFO',
             'formatter': 'default',
-            'filename': 'info.log',
+            'filename': f'{BASE_DIR}/logs/info.log',
         }
     },
     'loggers': {
