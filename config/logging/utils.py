@@ -18,7 +18,7 @@ def env_info(logger):
     logger.info(f'Root Dir: {root_dir}')
     env = os.environ.get('CRAWLER_DEFAULT_ENV')
     logger.info(f'ENVIRONMENT: {env}')
-    version = ".".join(map(str, sys.version_info[:3]))
+    version = '.'.join(map(str, sys.version_info[:3]))
     logger.info(f'Python: {version}')
     db_host = os.environ.get('DB_HOST')
     logger.info(f'DB Host: {db_host}')

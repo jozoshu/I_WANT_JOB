@@ -43,7 +43,7 @@ class WantedHandler(BaseHandler):
             return True
         except Exception as e:
             op.set_process_listing_status(self.name, idx, 500, self.conn)
-            logger.error(f"Wanted - 크롤링 에러: {e}")
+            logger.error(f'Wanted - 크롤링 에러: {e}')
             self.conn.commit()
             return False
 
