@@ -21,6 +21,7 @@ LOGGING = {
         'main': {
             'handlers': ['file_info'],
             'level': 'DEBUG',
+            'propagate': False
         }
     }
 }

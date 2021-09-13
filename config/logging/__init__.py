@@ -1,3 +1,6 @@
+import os
+from typing import Dict, List
+
 import logging as _logging
 import logging.config
 
@@ -7,18 +10,27 @@ from config import settings
 class Logging:
     """로깅 모듈"""
 
-    DEFAULT_FMT = '[%(asctime)s] - %(name)s - [%(levelname)s] - %(message)s'
-    DEFAULT_FILENAME = f'{settings.BASE_DIR}/logs/info.log'
-    DEFAULT_MAX_BYTES = 1024 * 1024 * 1  # 1MB
-
     def __init__(self):
-        config = self._set_parameter(settings.LOGGING)
+        global _logging
+        self.module_list = []
+        config = self.set_loggers(settings.LOGGING)
         _logging.config.dictConfig(config)
 
-    def _scan_modules_dir(self):
-        return ['modules.handlers.wanted']
+    def _process_filename(self, filename: str) -> str:
+        filename = filename.replace('/', '.').replace('__init__', '')
+        if filename.endswith('.'):
+            filename = filename[:-1]
+        return filename
 
-    def _set_parameter(self, logging_env):
+    def _scan_modules_dir(self) -> List:
+        module_list = []
+        for parent, _, file_list in list(os.walk('modules')):
+            for fname in map(lambda x: x[:-3], filter(lambda x: x.endswith('.py'), file_list)):
+                name = self._process_filename(f'{parent}/{fname}')
+                module_list.append(name)
+        return module_list
+
+    def set_loggers(self, logging_env: Dict) -> Dict:
         loggers = logging_env['loggers'].get('main')
 
         for log in self._scan_modules_dir():
@@ -26,7 +38,7 @@ class Logging:
 
         return logging_env
 
-    def get_logger(self, name):
+    def get_logger(self, name: str):
         return _logging.getLogger(name)
 
 
