@@ -2,9 +2,13 @@
 채용 사이트의 공고들을 수집하여 저장한다.
 
 ### 개발환경 
-- OS: Mac on M1 (local)
-- Language: [Python 3.9.2](https://www.python.org/downloads/release/python-392/)
-- Database: PostgreSQL 12.7
+- **OS**:
+  - Mac on M1 (local)
+  - CentOS 7 (production)
+- **Language**:
+  - [Python 3.9.2](https://www.python.org/downloads/release/python-392/)
+- **Database**:
+  - PostgreSQL 12.7
 
 ### 프로젝트 구조
 ~~~bash
@@ -66,6 +70,13 @@ $> source venv/bin/activate
 ~~~bash
 (venv) $> python main.py
 ~~~
+- env 옵션을 주어 실행 환경을 구분할 수 있다.
+~~~bash
+# 서버상에서 실행시
+$> python main.py --env=production
+# 로컬 환경에서 실행시
+$> python main.py --env=local
+~~~
 
 ## 1.4 Add command to crontab
 ~~~bash
@@ -75,5 +86,5 @@ $> crontab -e
 ROOTPATH=/root/project/path
 
 # 매일 자정마다 돌아가도록 설정
-0 15 * * * $ROOTPATH/venv/bin/python $ROOTPATH/main.py
+0 15 * * * $ROOTPATH/venv/bin/python $ROOTPATH/main.py --env=production
 ~~~
