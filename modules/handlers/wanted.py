@@ -1,6 +1,8 @@
 from time import sleep
 from typing import Dict
 
+from psycopg2 import IntegrityError
+
 from config.logging import get_logger
 from modules.crawlers.wanted_crawlers import (
     WantedJobListCrawler,
@@ -37,11 +39,12 @@ class WantedHandler(BaseHandler):
             op.insert_wanted_position_list(response, self.conn)
             op.insert_collecting_list(self.name, response)
             op.set_process_listing_status(self.name, idx, 200, self.conn)
+            logger.info(f'Wanted - {idx}번째 리스트 crawl')
             self.conn.commit()
             return True
         except Exception as e:
             op.set_process_listing_status(self.name, idx, 500, self.conn)
-            logger.error(f"Wanted - 크롤링 에러: {e}")
+            logger.error(f'Wanted - 크롤링 에러: {e}')
             self.conn.commit()
             return False
 
@@ -52,7 +55,6 @@ class WantedHandler(BaseHandler):
         is_continue = True
         while is_continue:
             is_continue = self._insert_job_list(idx)
-            logger.info(f'Wanted - {idx}번째 리스트 crawl')
             idx += 1
             sleep(.1)
 
@@ -64,6 +66,9 @@ class WantedHandler(BaseHandler):
                 op.insert_wanted_position_detail(response, self.crawl_date)
                 op.set_process_collecting_status(self.name, position_id, 200)
                 logger.info(f'Wanted - 채용공고 상세 정보 저장 - position_id: {position_id}')
+            except IntegrityError as e:
+                op.set_process_collecting_status(self.name, position_id, 300)
+                logger.info(f'Wanted - 채용공고 상세 정보 저장 DB 에러 - position_id: {position_id} - {e}')
             except Exception as e:
                 op.set_process_collecting_status(self.name, position_id, 500)
                 logger.exception(f'Wanted - 채용공고 상세 정보 저장 에러 - position_id: {position_id} - {e}')

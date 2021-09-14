@@ -3,11 +3,15 @@
 # Virtual Environment
 venv/
 
-# Dotenv File
+# Env Value File
+config/settings/local.py
 .env
 
 # Log files
 *.log
+
+# AWS Setting files
+.aws/
 
 
 # Editor Setting Files (Pycharm, VSCode ...)
@@ -17,3 +21,6 @@ venv/
 # Cache Files
 __pycache__/
 *.pyc
+
+# MacOS System Files
+.DS_Store
