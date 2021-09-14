@@ -1,5 +1,8 @@
+from functools import wraps
 import os
 import sys
+
+from config.logging import get_logger
 
 
 def env_info(logger):
@@ -24,3 +27,18 @@ def env_info(logger):
     logger.info(f'DB Host: {db_host}')
     db_name = os.environ.get('DB_NAME')
     logger.info(f'DB NAME: {db_name}')
+
+
+def manager_logging(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        logger = get_logger('main')
+        env_info(logger)
+
+        logger.info('RUNNING MANAGER')
+        logger.info('='*80)
+        func(*args, **kwargs)
+        logger.info('='*80)
+        logger.info('FINISHED')
+
+    return wrapper

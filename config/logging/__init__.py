@@ -23,8 +23,8 @@ class Logging:
         return filename
 
     def _scan_modules_dir(self) -> List:
-        module_list = []
-        for parent, _, file_list in list(os.walk('modules')):
+        module_list = ['core.manager']
+        for parent, _, file_list in os.walk(f'modules'):
             for fname in map(lambda x: x[:-3], filter(lambda x: x.endswith('.py'), file_list)):
                 name = self._process_filename(f'{parent}/{fname}')
                 module_list.append(name)
