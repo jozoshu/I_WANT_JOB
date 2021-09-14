@@ -1,12 +1,15 @@
 import os
 
+from core import execute
+
 
 class ArgumentHandler:
     """Command 로 입력받은 argument 읽어와서 알맞은 환경 설정"""
 
-    VALID_ARGS = ['--env']
+    VALID_ARGS = ['--env', '--version']
 
     def __init__(self, args):
+        self.is_execute = True
         self.argument_list = args[1:]
         self.arg_dict = {}
 
@@ -25,6 +28,11 @@ class ArgumentHandler:
         for k, v in self.arg_dict.items():
             if k == 'env':
                 os.environ.setdefault('CRAWLER_DEFAULT_ENV', v[0])
+            elif k == 'version':
+                self.is_execute = False
+                print("version")
+                break
+
 
     @staticmethod
     def set_default():
@@ -34,6 +42,9 @@ class ArgumentHandler:
         self.parse()
         self.process()
         self.set_default()
+
+        if self.is_execute:
+            execute()
 
 
 def handle_arguments(args):
