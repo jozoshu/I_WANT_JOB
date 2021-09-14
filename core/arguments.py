@@ -1,6 +1,8 @@
 import os
+import sys
 
 from core import execute
+from core.versions import VersionManager
 
 
 class ArgumentHandler:
@@ -9,7 +11,7 @@ class ArgumentHandler:
     VALID_ARGS = ['--env', '--version']
 
     def __init__(self, args):
-        self.is_execute = True
+        self.executable = True
         self.argument_list = args[1:]
         self.arg_dict = {}
 
@@ -29,8 +31,9 @@ class ArgumentHandler:
             if k == 'env':
                 os.environ.setdefault('CRAWLER_DEFAULT_ENV', v[0])
             elif k == 'version':
-                self.is_execute = False
-                print("version")
+                self.executable = False
+                version = VersionManager().version
+                sys.stdout.write(version)
                 break
 
 
@@ -43,7 +46,7 @@ class ArgumentHandler:
         self.process()
         self.set_default()
 
-        if self.is_execute:
+        if self.executable:
             execute()
 
 
