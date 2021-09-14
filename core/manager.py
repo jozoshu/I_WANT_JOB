@@ -1,7 +1,7 @@
 from typing import List
 
 from config.logging import get_logger
-from config.logging.decorators import manager_logging
+from config.logging.utils import manager_logging
 from modules.handlers.base import BaseHandler
 from modules import handlers
 
