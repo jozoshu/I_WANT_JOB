@@ -3,6 +3,7 @@ from typing import List
 from config.logging import get_logger
 from config.logging.decorators import manager_logging
 from modules.handlers.base import BaseHandler
+from modules import handlers
 
 logger = get_logger(__name__)
 
@@ -12,10 +13,19 @@ class HandleManager:
 
     def __init__(self):
         self.handlers: List = []
+        self.scan_handlers()
 
-    def add_handler(self, handler: BaseHandler):
-        assert isinstance(handler, BaseHandler)
-        self.handlers.append(handler)
+    def scan_handlers(self):
+        for attr in dir(handlers):
+            handler = getattr(handlers, attr)
+            try:
+                assert issubclass(handler, BaseHandler), \
+                    f'Invalid Handler Format: {repr(handler)}'
+                self.handlers.append(handler())
+            except AssertionError as e:
+                raise e
+            except TypeError:
+                pass
 
     @manager_logging
     def handle(self, *args, **kwargs):
