@@ -77,6 +77,11 @@ $> python main.py --env=production
 # 로컬 환경에서 실행시
 $> python main.py --env=local
 ~~~
+- version 옵션을 주어 버전 체크
+~~~bash
+$> python main.py --version
+1.3.0
+~~~
 
 ## 1.4 Add command to crontab
 ~~~bash
