@@ -39,6 +39,7 @@ class WantedHandler(BaseHandler):
             op.insert_wanted_position_list(response, self.conn)
             op.insert_collecting_list(self.name, response)
             op.set_process_listing_status(self.name, idx, 200, self.conn)
+            logger.info(f'Wanted - {idx}번째 리스트 crawl')
             self.conn.commit()
             return True
         except Exception as e:
@@ -54,7 +55,6 @@ class WantedHandler(BaseHandler):
         is_continue = True
         while is_continue:
             is_continue = self._insert_job_list(idx)
-            logger.info(f'Wanted - {idx}번째 리스트 crawl')
             idx += 1
             sleep(.1)
 
