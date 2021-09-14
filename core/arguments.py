@@ -2,7 +2,7 @@ import os
 import sys
 
 from core import execute
-from core.versions import VersionManager
+from core.versions import get_version
 
 
 class ArgumentHandler:
@@ -32,10 +32,8 @@ class ArgumentHandler:
                 os.environ.setdefault('CRAWLER_DEFAULT_ENV', v[0])
             elif k == 'version':
                 self.executable = False
-                version = VersionManager().version
-                sys.stdout.write(version)
+                sys.stdout.write(get_version())
                 break
-
 
     @staticmethod
     def set_default():
