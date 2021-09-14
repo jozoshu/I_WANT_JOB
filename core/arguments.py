@@ -2,12 +2,16 @@ import os
 
 
 class ArgumentHandler:
+    """Command 로 입력받은 argument 읽어와서 알맞은 환경 설정"""
+
+    VALID_ARGS = ['--env']
+
     def __init__(self, args):
         self.argument_list = args[1:]
         self.arg_dict = {}
 
     def _validate_key(self, key: str):
-        if not key.startswith('--'):
+        if not key.startswith('--') or key not in self.VALID_ARGS:
             raise ValueError(f'Invalid Argument: {key}')
         return key[2:]
 
@@ -17,7 +21,7 @@ class ArgumentHandler:
             key = self._validate_key(k)
             self.arg_dict.update({key: v})
 
-    def processing(self):
+    def process(self):
         for k, v in self.arg_dict.items():
             if k == 'env':
                 os.environ.setdefault('CRAWLER_DEFAULT_ENV', v[0])
@@ -28,7 +32,7 @@ class ArgumentHandler:
 
     def handle(self):
         self.parse()
-        self.processing()
+        self.process()
         self.set_default()
 
 
